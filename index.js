@@ -1,5 +1,5 @@
 // IMPORTS AND DEFS
-
+require('dotenv').config()
 const { response } = require('express')
 const express = require('express')
 const morgan = require('morgan')
@@ -9,6 +9,7 @@ const unknowEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknow endpoint' })
 }
 const app = express()
+const Person = require('./models/person')
 
 // MIDDLEWARE
 
@@ -27,35 +28,12 @@ morgan.token('body', function (req) {
 })
 app.use(morgan(':method :url :status :response-time ms :body'))
 
-// DATA
-
-let persons = [
-    {
-        id: 1,
-        name: 'Arto Hellas',
-        number: '040-123456'
-    },
-    {
-        id: 2,
-        name: 'Ada Lovelace',
-        number: '39-44-5323523'
-    },
-    {
-        id: 3,
-        name: 'Dan Abramov',
-        number: '12-43-234345'
-    },
-    {
-        id: 4,
-        name: 'Mary Poppendick',
-        number: '39-23-6423122'
-    }
-]
-
 // ROUTES
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 app.get('/info', (req, res) => {
@@ -119,7 +97,7 @@ app.use(unknowEndpoint)
 
 // SERVER CONFIG
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}`)
 })
