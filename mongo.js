@@ -18,9 +18,9 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-switch(process.argv.length){
+switch (process.argv.length) {
     case 3:
-        Person.find({}).then(result =>{
+        Person.find({}).then(result => {
             console.log('phonebook:')
             result.forEach(person => {
                 console.log(`${person.name} ${person.number}`)
@@ -42,6 +42,6 @@ switch(process.argv.length){
         console.log(`Please provide the correct number of arguments:
                     for listing the phonebook: node mongo.js <password>
                     for adding to phonebook: node mongo.js <password> <name> <number>`
-                    )
+        )
         process.exit(1)
 }

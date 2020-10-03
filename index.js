@@ -21,7 +21,7 @@ app.use(express.json())
 // For logs
 morgan.token('body', function (req) {
     if (req.method === 'POST') {
-        return JSON.stringify(req.body) 
+        return JSON.stringify(req.body)
     }
     return ' '
 })
@@ -81,11 +81,11 @@ app.delete('/api/persons/:id', (req, res) => {
 // true if it finds at least one.
 const nameComparison = (name) => {
     const filteredPersons = persons.filter(person => {
-        const comparison = person.name.localeCompare(name, 
-        undefined, { sensitivity: 'base'})
+        const comparison = person.name.localeCompare(name,
+            undefined, { sensitivity: 'base' })
         return comparison === 0
     })
-    
+
     return filteredPersons.length > 0
 }
 
@@ -101,7 +101,7 @@ app.post('/api/persons', (req, res) => {
             error: 'name must be unique'
         })
     }
-    
+
     const person = {
         name: body.name,
         number: body.number,
