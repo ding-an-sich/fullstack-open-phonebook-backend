@@ -1,0 +1,1 @@
+mongodb+srv://vmrc:<password>@cluster0.dtjy2.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority
