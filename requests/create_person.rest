@@ -1,0 +1,8 @@
+// You need VS Code REST Client to execute this code
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "vmrc",
+    "number": "+55 21 2345678"
+}

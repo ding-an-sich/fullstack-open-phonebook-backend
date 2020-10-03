@@ -1,0 +1,2 @@
+// You need VS Code REST Client to execute this code
+DELETE http://localhost:3001/api/persons/1
