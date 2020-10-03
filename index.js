@@ -1,11 +1,24 @@
+// IMPORTS AND DEFS
+
 const { response } = require('express')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+// Custom middleware for returning 404
+const unknowEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknow endpoint' })
+}
 const app = express()
 
+// MIDDLEWARE
+
+// For cross-origin javascript
 app.use(cors())
+// For showing static content (our front-end in this case)
+app.use(express.static('build'))
+// For building JS objects from strings
 app.use(express.json())
+// For logs
 morgan.token('body', function (req) {
     if (req.method === 'POST') {
         return JSON.stringify(req.body) 
@@ -13,6 +26,8 @@ morgan.token('body', function (req) {
     return ' '
 })
 app.use(morgan(':method :url :status :response-time ms :body'))
+
+// DATA
 
 let persons = [
     {
@@ -36,6 +51,8 @@ let persons = [
         number: '39-23-6423122'
     }
 ]
+
+// ROUTES
 
 app.get('/api/persons', (req, res) => {
     res.json(persons)
@@ -95,6 +112,12 @@ app.post('/api/persons', (req, res) => {
 
     res.json(person)
 })
+
+// This actually has to come after the routes are defined
+// or it will handle ALL routes with a 404
+app.use(unknowEndpoint)
+
+// SERVER CONFIG
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
