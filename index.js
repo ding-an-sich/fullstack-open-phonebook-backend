@@ -32,7 +32,7 @@ app.use(morgan(':method :url :status :response-time ms :body'))
 
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
-        response.json(persons)
+        res.json(persons)
     })
 })
 
