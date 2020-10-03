@@ -57,15 +57,16 @@ app.delete('/api/persons/:id', (req, res) => {
 // Compares the name sent in the request with 
 // the names already on the list and returns
 // true if it finds at least one.
-const nameComparison = (name) => {
-    const filteredPersons = persons.filter(person => {
-        const comparison = person.name.localeCompare(name,
-            undefined, { sensitivity: 'base' })
-        return comparison === 0
-    })
 
-    return filteredPersons.length > 0
-}
+// const nameComparison = (name) => {
+//     const filteredPersons = persons.filter(person => {
+//         const comparison = person.name.localeCompare(name,
+//             undefined, { sensitivity: 'base' })
+//         return comparison === 0
+//     })
+
+//     return filteredPersons.length > 0
+// }
 
 app.post('/api/persons', (req, res) => {
     const body = req.body
@@ -74,21 +75,22 @@ app.post('/api/persons', (req, res) => {
         return res.status(400).json({
             error: 'name or number missing'
         })
-    } else if (nameComparison(body.name)) {
-        return res.status(400).json({
-            error: 'name must be unique'
-        })
     }
 
-    const person = {
+    // else if (nameComparison(body.name)) {
+    //     return res.status(400).json({
+    //         error: 'name must be unique'
+    //     })
+    // }
+
+    const person = new Person({
         name: body.name,
-        number: body.number,
-        id: Math.floor(Math.random() * 10000)
-    }
+        number: body.number
+    })
 
-    persons = persons.concat(person)
-
-    res.json(person)
+    person.save().then(savedPerson => {
+        res.json(savedPerson)
+    })
 })
 
 // This actually has to come after the routes are defined
