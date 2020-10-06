@@ -10,11 +10,18 @@
     "build:ui": "rm -rf build && cd ../fullstack-open/part2/phonebook && yarn build && cp -r build ~/code/ding-an-sich/fullstack-open-phonebook-backend",
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
-    "logs:prod": "heroku logs --tails"
+    "logs:prod": "heroku logs --tails",
+    "lint": "eslint ."
   },
   "author": "vmrc",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "7.2.0",
+    "eslint-config-airbnb": "18.2.0",
+    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-jsx-a11y": "^6.3.0",
+    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react-hooks": "4.0.0",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
