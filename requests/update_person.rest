@@ -1,0 +1,7 @@
+PUT http://localhost:3001/api/persons/5f78f8513032f29342d33c55
+Content-Type: application/json
+
+{
+    "name": "vmrc",
+    "number": "34567818"
+}
