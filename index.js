@@ -4,10 +4,6 @@ const { response } = require('express')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-// Custom middleware for returning 404
-const unknowEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknow endpoint' })
-}
 const app = express()
 const Person = require('./models/person')
 
@@ -37,23 +33,34 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-    res.send(`<p>Phonebook has info for ${persons.length} people.</p>
-             <p>${new Date()}</p>`)
+    Person.countDocuments({})
+        .then(result => {
+            res.send(`<p>Phonebook has info for ${result} people.</p>
+            <p>${new Date()}</p>`)
+        })
 })
 
-app.get('/api/persons/:id', (req, res) => {
-    Person.findById(req.params.id).then(person => {
-        res.json(person)
-    })
+app.get('/api/persons/:id', (req, res, next) => {
+    Person.findById(req.params.id)
+        .then(person => {
+            if (person) {
+                res.json(person)
+            } else {
+                res.status(404).end()
+            }
+        })
+        .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(p => p.id !== id)
-
-    res.status(204).end()
+app.delete('/api/persons/:id', (req, res, next) => {
+    Person.findByIdAndRemove(req.params.id)
+        .then(result => {
+            res.status(204).end()
+        })
+        .catch(error => next(error))
 })
 
+// THIS CODE DEPRECATED AFTER MONGODB
 // Compares the name sent in the request with 
 // the names already on the list and returns
 // true if it finds at least one.
@@ -77,6 +84,7 @@ app.post('/api/persons', (req, res) => {
         })
     }
 
+    // THIS CODE DEPRECATED AFTER MONGODB
     // else if (nameComparison(body.name)) {
     //     return res.status(400).json({
     //         error: 'name must be unique'
@@ -93,9 +101,42 @@ app.post('/api/persons', (req, res) => {
     })
 })
 
+app.put('/api/persons/:id', (req, res, next) => {
+    const body = req.body
+
+    const person = {
+        name: body.name,
+        number: body.number
+    }
+
+    Person.findByIdAndUpdate(req.params.id, person, { new: true })
+        .then(updatedPerson => {
+            res.json(updatedPerson)
+        })
+        .catch(error => next(error))
+})
+
+// ERROR HANDLING
+
 // This actually has to come after the routes are defined
 // or it will handle ALL routes with a 404
+// Custom middleware for returning 404
+const unknowEndpoint = (req, res) => {
+    res.status(404).send({ error: 'unknow endpoint' })
+}
 app.use(unknowEndpoint)
+
+// Custom middleware for handling errors
+const errorHandler = (error, req, res, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return res.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error)
+}
+app.use(errorHandler)
 
 // SERVER CONFIG
 
